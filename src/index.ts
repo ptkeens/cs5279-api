@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express, { Express, Request, Response } from 'express';
 import { authRouter } from './Auth/authRoutes';
 import { ApiResponse } from './ApiResponse/apiResponse';
-import { DatabaseService } from './Database/databaseService';
 
 const app: Express = express();
 const port = process.env.PORT || 80;
@@ -26,8 +25,6 @@ app.get('*', (req: Request, res: Response) => {
     .setCode(ApiResponse.HTTP_NOT_FOUND)
     .setError(true)
     .setMessage('Resource Not Found');
-
-    const conn = DatabaseService.getConnection();
 
     res.status(response.code).send(response.toJSON());
 });
