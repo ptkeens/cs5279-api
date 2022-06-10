@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import { Connection } from 'mysql2/promise';
+import { DatabaseError } from './databaseError';
 
 export class DatabaseService {
 
@@ -18,7 +19,7 @@ export class DatabaseService {
                 });
             } catch (err) {
                 console.log(err);
-                throw err;
+                throw new DatabaseError('Error when connecting to data source!');
             }
         }
 

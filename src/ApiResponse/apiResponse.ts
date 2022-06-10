@@ -12,6 +12,9 @@ export class ApiResponse {
     message: string;
     data: object|Array<any>;
 
+    /**
+     * Iniitalize our object
+     */
     constructor() {
         this.code = 0;
         this.error = false;
@@ -19,27 +22,51 @@ export class ApiResponse {
         this.data = [];
     }
 
+    /**
+     * Set the current "code"
+     * @param code number
+     * @returns ApiResponse
+     */
     setCode = (code: number) : ApiResponse => {
         this.code = code;
         return this;
     }
 
+    /**
+     * Set the error flag
+     * @param error boolean
+     * @returns ApiResponse
+     */
     setError = (error: boolean) : ApiResponse => {
         this.error = error;
         return this;
     }
 
+    /**
+     * 
+     * @param message string
+     * @returns ApiResponse
+     */
     setMessage = (message: string) : ApiResponse => {
         this.message = message;
         return this;
     }
 
+    /**
+     * Set the data parameter
+     * @param data object|Array<any>
+     * @returns ApiResponse
+     */
     setData = (data: object|Array<any>) : ApiResponse => {
         this.data = data;
         return this;
     }
 
-    toJSON = () => {
+    /**
+     * Convert our ApiResponse into a JSON string
+     * @returns string
+     */
+    toJSON = () : string => {
         let response;
 
         if (this.error) {

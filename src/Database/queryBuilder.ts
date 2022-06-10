@@ -21,12 +21,12 @@ export class QueryBuilder {
         this.offset = 0;
     }
 
-    addSelect = (column: string) => {
+    addSelect = (column: string) : QueryBuilder => {
         this.selectStatements.push(column);
         return this;
     }
 
-    addJoin = (join: string, joinType: JoinTypes = JoinTypes.JOIN_TYPE_INNER) => {
+    addJoin = (join: string, joinType: JoinTypes = JoinTypes.JOIN_TYPE_INNER) : QueryBuilder => {
         this.joinStatements.push({
             joinType,
             sql: join
@@ -34,32 +34,32 @@ export class QueryBuilder {
         return this;
     }
 
-    setFrom = (from: string) => {
+    setFrom = (from: string) : QueryBuilder => {
         this.fromStatement = from;
         return this;
     }
 
-    addWhere = (where: string) => {
+    addWhere = (where: string) : QueryBuilder => {
         this.whereClauses.push(where);
         return this;
     }
 
-    addSort = (sort: string) => {
+    addSort = (sort: string) : QueryBuilder => {
         this.sortClauses.push(sort);
         return this;
     }
 
-    setLimit(limit: number) {
+    setLimit = (limit: number) : QueryBuilder => {
         this.limit = limit;
         return this;
     }
 
-    setOffset(offset: number) {
+    setOffset = (offset: number) : QueryBuilder => {
         this.offset = offset;
         return this;
     }
 
-    buildQuery = () => {
+    buildQuery = () : string => {
         let query = 'SELECT ';
 
         if (this.selectStatements.length) {
