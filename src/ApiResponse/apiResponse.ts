@@ -24,7 +24,7 @@ export class ApiResponse {
 
     /**
      * Set the current "code"
-     * @param code number
+     * @param {number} code
      * @returns ApiResponse
      */
     setCode = (code: number) : ApiResponse => {
@@ -34,7 +34,7 @@ export class ApiResponse {
 
     /**
      * Set the error flag
-     * @param error boolean
+     * @param {boolean} error
      * @returns ApiResponse
      */
     setError = (error: boolean) : ApiResponse => {
@@ -44,7 +44,7 @@ export class ApiResponse {
 
     /**
      * 
-     * @param message string
+     * @param {string} message
      * @returns ApiResponse
      */
     setMessage = (message: string) : ApiResponse => {
@@ -54,7 +54,7 @@ export class ApiResponse {
 
     /**
      * Set the data parameter
-     * @param data object|Array<any>
+     * @param {object|Array<any>} data
      * @returns ApiResponse
      */
     setData = (data: object|Array<any>) : ApiResponse => {
@@ -63,10 +63,10 @@ export class ApiResponse {
     }
 
     /**
-     * Convert our ApiResponse into a JSON string
-     * @returns string
+     * format and return our response
+     * @returns {object}
      */
-    toJSON = () : string => {
+    getResponse = () : object => {
         let response;
 
         if (this.error) {
@@ -81,6 +81,6 @@ export class ApiResponse {
             }
         }
 
-        return JSON.stringify(response);
+        return response;
     }
 }
