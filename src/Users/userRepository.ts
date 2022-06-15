@@ -90,6 +90,9 @@ export class userRepository extends baseUserRepository {
                 case 'lastName':
                     values.push(UserEntity.validateLastName(value));
                     break;
+                case 'password':
+                    values.push(UserEntity.hashPassword(value));
+                    break;
                 default:
                     values.push(value);
             }
