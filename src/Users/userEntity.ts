@@ -37,6 +37,7 @@ export class UserEntity implements UserDto {
     }
 
     static hashPassword = async (password: string) : Promise<string> => {
+        console.log(`Incoming password: ${password}`);
         const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(password, salt);
 
@@ -90,6 +91,14 @@ export class UserEntity implements UserDto {
         }
 
         return email;
+    }
+
+    static validatePassword = (password: string) : string => {
+        if (password === '' || password == undefined || password == null) {
+            throw new UserValidationError('Password cannot be empty');
+        }
+
+        return password;
     }
 
 }

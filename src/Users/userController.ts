@@ -3,6 +3,7 @@ import { ApiResponse } from '../ApiResponse/apiResponse';
 import { UserSearchDto } from './userDto';
 import { userRepository } from './userRepository';
 import { UserService } from "./userService";
+import { UserValidationError } from './UserValidationError';
 
 export class UserController {
 
@@ -60,7 +61,14 @@ export class UserController {
 
             console.log(result);
         } catch (err) {
-            console.log(err);
+            if (err instanceof UserValidationError) {
+                const response = new ApiResponse();
+                response
+                    .setCode(ApiResponse.HTTP_BAD_REQUEST)
+                    .setError(true)
+                    .setMessage(err.message);
+                res.status(response.code).send(response.getResponse());
+            }
         }
     }
 

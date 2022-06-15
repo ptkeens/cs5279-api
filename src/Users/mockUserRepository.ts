@@ -3,17 +3,17 @@ import { CreateUserDto, UpdateUserDto, UserSearchDto, UserDto } from "./userDto"
 
 export class MockUserRepository extends baseUserRepository {
 
-    create = async (userCreate: CreateUserDto) : Promise<boolean> => {
+    create = async (userCreate: CreateUserDto) : Promise<number> => {
         
-        return true;
+        return 1;
     }
 
-    update = async (id: number, params: UpdateUserDto) : Promise<void> => {
-        
+    update = async (id: number, params: UpdateUserDto) : Promise<number> => {
+        return 1;
     }
 
-    delete = async (id: number) => {
-    
+    delete =  async (id: number) : Promise<number> => {
+        return 1;
     }
 
     search = async (params: UserSearchDto) => {
