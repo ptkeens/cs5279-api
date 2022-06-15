@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { ApiResponse } from '../ApiResponse/apiResponse';
-import { UserSearchDto } from './userDto';
-import { userRepository } from './userRepository';
+import { UserRepository } from './userRepository';
 import { UserService } from "./userService";
 import { UserValidationError } from './UserValidationError';
 
@@ -12,7 +11,7 @@ export class UserController {
     constructor() {
         this.userService = new UserService();
         this.userService.setRepository(
-            new userRepository()
+            new UserRepository()
         );
     }
 
@@ -61,11 +60,11 @@ export class UserController {
 
             console.log(result);
         } catch (err) {
+            const response = new ApiResponse();
+            response.setError(true);
             if (err instanceof UserValidationError) {
-                const response = new ApiResponse();
                 response
                     .setCode(ApiResponse.HTTP_BAD_REQUEST)
-                    .setError(true)
                     .setMessage(err.message);
                 res.status(response.code).send(response.getResponse());
             }
@@ -79,9 +78,25 @@ export class UserController {
             const result = await this.userService.updateUser(id, req.body);
             const response = new ApiResponse();
 
-            console.log(result);
+            if (result) {
+                response.setCode(ApiResponse.HTTP_OK);
+            } else {
+                response
+                    .setCode(ApiResponse.HTTP_NOT_FOUND)
+                    .setError(true)
+                    .setMessage('Resource not found');
+            }
+
+            res.status(response.code).send(response.getResponse());
         } catch (err) {
-            console.log(err);
+            const response = new ApiResponse();
+            response.setError(true);
+            if (err instanceof UserValidationError) {
+                response
+                    .setCode(ApiResponse.HTTP_BAD_REQUEST)
+                    .setMessage(err.message);
+                res.status(response.code).send(response.getResponse());
+            }
         }
     }
 
@@ -92,9 +107,25 @@ export class UserController {
             const result = await this.userService.deleteUser(id);
             const response = new ApiResponse();
 
-            console.log(result);
+            if (result) {
+                response.setCode(ApiResponse.HTTP_OK);
+            } else {
+                response
+                    .setCode(ApiResponse.HTTP_NOT_FOUND)
+                    .setError(true)
+                    .setMessage('Resource not found');
+            }
+
+            res.status(response.code).send(response.getResponse());
         } catch (err) {
-            console.log(err);
+            const response = new ApiResponse();
+            response.setError(true);
+            if (err instanceof UserValidationError) {
+                response
+                    .setCode(ApiResponse.HTTP_BAD_REQUEST)
+                    .setMessage(err.message);
+                res.status(response.code).send(response.getResponse());
+            }
         }
     }
 

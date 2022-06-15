@@ -26,7 +26,7 @@ export class UserEntity implements UserDto {
         this.id = details.id;
         this.firstName = details.firstName;
         this.lastName = details.lastName;
-        this.email = details.lastName;
+        this.email = details.email;
         this.password = details.password;
 
         return this;
@@ -37,7 +37,6 @@ export class UserEntity implements UserDto {
     }
 
     static hashPassword = async (password: string) : Promise<string> => {
-        console.log(`Incoming password: ${password}`);
         const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(password, salt);
 

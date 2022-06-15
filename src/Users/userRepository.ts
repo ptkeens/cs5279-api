@@ -34,7 +34,7 @@ export class baseUserRepository {
 
 }
 
-export class userRepository extends baseUserRepository {
+export class UserRepository extends baseUserRepository {
     
     table: string;
 
