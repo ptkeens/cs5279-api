@@ -43,6 +43,11 @@ export class UserRepository extends baseUserRepository {
         this.table = 'users';
     }
 
+    /**
+     * Create a user record in the repository
+     * @param {CreateUserDto} userCreate 
+     * @returns Promise<number>
+     */
     create = async (userCreate: CreateUserDto) : Promise<number> => {
         let query = `INSERT INTO ${this.table} SET
             firstName = ?,
@@ -72,6 +77,12 @@ export class UserRepository extends baseUserRepository {
         }
     }
 
+    /**
+     * Update a user record in the repository
+     * @param {number} id 
+     * @param {UpdateUserDto} params 
+     * @returns Promise<number>
+     */
     update = async (id: number, params: UpdateUserDto) : Promise<number> => {
         let query = `UPDATE ${this.table} SET `;
         const groupedParams = [];
@@ -117,6 +128,11 @@ export class UserRepository extends baseUserRepository {
         }
     }
 
+    /**
+     * Delete a user record from the repository
+     * @param {number} id 
+     * @returns Promise<number>
+     */
     delete = async (id: number) : Promise<number> => {
         let query = `DELETE FROM ${this.table} WHERE id=?`;
         let params = [ UserEntity.validateId(id) ];
@@ -132,6 +148,11 @@ export class UserRepository extends baseUserRepository {
         }
     }
 
+    /**
+     * Search the user records in the repository
+     * @param {UserSearchDto} userSearch 
+     * @returns Promise<Array<UserDto>>
+     */
     search = async (userSearch: UserSearchDto) : Promise<Array<UserDto>> => {
         const qb = new QueryBuilder();
         const params: Array<any> = [];

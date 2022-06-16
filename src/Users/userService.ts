@@ -1,8 +1,5 @@
-import { Request } from 'express';
-import { CreateUserDto, UpdateUserDto, UserSearchDto } from './userDto';
+import { UserDto, CreateUserDto, UpdateUserDto, UserSearchDto } from './userDto';
 import { baseUserRepository } from "./userRepository"
-import { UserValidationError } from './UserValidationError';
-
 
 export class UserService {
 
@@ -12,11 +9,20 @@ export class UserService {
         this.repository = new baseUserRepository();
     }
 
+    /**
+     * Set the repository to use for this service
+     * @param {baseUserRepository} rep 
+     */
     setRepository(rep: baseUserRepository) {
         this.repository = rep;
     }
 
-    listUsers = async (params: UserSearchDto) => {
+    /**
+     * Perform a "search" to list users
+     * @param {UserSearchDto} params 
+     * @returns Promise<Array<UserDto>>
+     */
+    listUsers = async (params: UserSearchDto) : Promise<Array<UserDto>> => {
         try {       
             const result = await this.repository.search(params);
             return result;
@@ -25,7 +31,12 @@ export class UserService {
         }
     }
 
-    getUser = async (id: number) => {
+    /**
+     * Get a single user record
+     * @param {number} id 
+     * @returns Promise<Array<UserDto>>
+     */
+    getUser = async (id: number) : Promise<Array<UserDto>> => {
         try {
             const params = {
                 id
@@ -38,6 +49,11 @@ export class UserService {
         }
     }
 
+    /**
+     * Create a user
+     * @param {CreateUserDto} params 
+     * @returns 
+     */
     createUser = async (params: CreateUserDto) => {
         try {
             const result = await this.repository.create(params);
@@ -47,7 +63,13 @@ export class UserService {
         }
     }
 
-    updateUser = async (id: number, params: UpdateUserDto) => {
+    /**
+     * Update a user record
+     * @param {number} id 
+     * @param {UpdateUserDto} params 
+     * @returns Promise<number>
+     */
+    updateUser = async (id: number, params: UpdateUserDto) : Promise<number> => {
         try {
             const result = await this.repository.update(id, params);
             return result;
@@ -56,7 +78,12 @@ export class UserService {
         }
     }
 
-    deleteUser = async (id: number) => {
+    /**
+     * Delete a user record
+     * @param {number} id 
+     * @returns Promise<number>
+     */
+    deleteUser = async (id: number) : Promise<number> => {
         try {
             const result = await this.repository.delete(id);
             return result;

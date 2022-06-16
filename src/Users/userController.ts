@@ -15,6 +15,11 @@ export class UserController {
         );
     }
 
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     */
     getAll = async (req: Request, res: Response) => {
         try {
             const result = await this.userService.listUsers(req.query);
@@ -29,6 +34,12 @@ export class UserController {
         }
     }
 
+
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     */
     getOne = async (req: Request, res: Response) => {
         try {
             const result = await this.userService.getUser(
@@ -53,6 +64,11 @@ export class UserController {
         }    
     }
 
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     */
     createUser = async (req: Request, res: Response) => {
         try {
             const result = await this.userService.createUser(req.body);
@@ -71,6 +87,11 @@ export class UserController {
         }
     }
 
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     */    
     updateUser = async (req: Request, res: Response) => {
         try {
             const id = parseInt(req.params?.id);
@@ -100,6 +121,11 @@ export class UserController {
         }
     }
 
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     */    
     deleteUser = async (req: Request, res: Response) => {
         try {
             const id = parseInt(req.params?.id);

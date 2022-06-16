@@ -14,6 +14,9 @@ export class UserEntity implements UserDto {
     static MAX_LASTNAME_LENGTH = 64;
     static MAX_EMAIL_LENGTH = 128;
 
+    /**
+     * Constructor
+     */
     constructor() {
         this.id = 0;
         this.firstName = '';
@@ -22,6 +25,11 @@ export class UserEntity implements UserDto {
         this.password = '';
     }
 
+    /**
+     * Populate the user entity with a UserDto
+     * @param {UserDto} details 
+     * @returns UserEntity
+     */
     setUser = (details: UserDto) : UserEntity => {
         this.id = details.id;
         this.firstName = details.firstName;
@@ -32,10 +40,20 @@ export class UserEntity implements UserDto {
         return this;
     }
 
+    /**
+     * Does the provided password match the hash in the current record?
+     * @param {string} password 
+     * @returns Promise<boolean>
+     */
     doesPasswordMatchHash = async (password: string) : Promise<boolean> => {
         return await bcrypt.compare(password, this.password);
     }
 
+    /**
+     * Hash the current passed-in string
+     * @param {string} password 
+     * @returns Promise<string>
+     */
     static hashPassword = async (password: string) : Promise<string> => {
         const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(password, salt);
@@ -43,6 +61,11 @@ export class UserEntity implements UserDto {
         return hashed;
     }
 
+    /**
+     * Validate and return a cleaned ID
+     * @param {number} id 
+     * @returns number
+     */
     static validateId = (id: any) : number => {       
         let num = Number(id);
         if (!isNaN(num)) {
@@ -56,6 +79,11 @@ export class UserEntity implements UserDto {
         }
     }
 
+    /**
+     * Validate and return a firstName
+     * @param {string} firstName 
+     * @returns string
+     */
     static validateFirstName = (firstName: string) : string => {
         if (firstName === '' || firstName == undefined || firstName == null) {
             throw new UserValidationError('First name cannot be empty');
@@ -68,6 +96,11 @@ export class UserEntity implements UserDto {
         return firstName;
     }
 
+    /**
+     * Validate and return a lastName
+     * @param {string} lastName 
+     * @returns string
+     */
     static validateLastName = (lastName: string) : string => {
         if (lastName === '' || lastName == undefined || lastName == null) {
             throw new UserValidationError('Last name cannot be empty');
@@ -80,6 +113,11 @@ export class UserEntity implements UserDto {
         return lastName;
     }
 
+    /**
+     * Validate and return an email address
+     * @param {string }email 
+     * @returns string
+     */
     static validateEmail = (email: string) : string => {
         if (email === '' || email == undefined || email == null) {
             throw new UserValidationError('Email cannot be empty');
@@ -92,6 +130,11 @@ export class UserEntity implements UserDto {
         return email;
     }
 
+    /**
+     * Validate and return a password string
+     * @param {string} password 
+     * @returns string
+     */
     static validatePassword = (password: string) : string => {
         if (password === '' || password == undefined || password == null) {
             throw new UserValidationError('Password cannot be empty');
