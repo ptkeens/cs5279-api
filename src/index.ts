@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { Express, Request, Response } from 'express';
 import { authRouter } from './Auth/authRoutes';
 import { ApiResponse } from './ApiResponse/apiResponse';
+import { userRouter } from './Users/userRoutes';
 
 const app: Express = express();
 const port = process.env.PORT || 80;
@@ -13,6 +14,7 @@ app.use(express.urlencoded({extended: true}));
 app.use('/auth', authRouter);
 
 // User routes
+app.use('/users', userRouter);
 
 // Patient routes
 
@@ -26,7 +28,7 @@ app.get('*', (req: Request, res: Response) => {
     .setError(true)
     .setMessage('Resource Not Found');
 
-    res.status(response.code).send(response.toJSON());
+    res.status(response.code).send(response.getResponse());
 });
 
 // initialize our app

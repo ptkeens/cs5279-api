@@ -10,4 +10,4 @@ test('Mock repository search returns 2 records', async () => {
     const results = await repo.search({});
 
     expect(results.length).toBe(2);
-})
+});
