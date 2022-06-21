@@ -5,7 +5,7 @@ import { DatabaseError } from '../Database/databaseError';
 import { QueryBuilder } from '../Database/queryBuilder';
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 
-export class baseUserRepository {
+export class BaseUserRepository {
 
     create = async (userCreate: CreateUserDto) : Promise<number> => {
         return new Promise((resolve, reject) => {
@@ -34,7 +34,7 @@ export class baseUserRepository {
 
 }
 
-export class UserRepository extends baseUserRepository {
+export class UserRepository extends BaseUserRepository {
     
     table: string;
 
@@ -62,9 +62,6 @@ export class UserRepository extends baseUserRepository {
             UserEntity.validateEmail(userCreate.email),
             await UserEntity.hashPassword(UserEntity.validatePassword(userCreate.password))
         ];
-
-        console.log(query);
-        console.log(params);
 
         try {
             const conn = await DatabaseService.getConnection();

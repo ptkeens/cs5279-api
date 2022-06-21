@@ -10,15 +10,27 @@ export class AuthController {
     }
 
     checkLogin = async (req: Request, res: Response) => {
-        
+        try {
+
+        } catch (err) {
+
+        }
     }
 
     login = async (req: Request, res: Response) => {
-
+        try {
+            const response = await this.authService.processLogin(req);
+        } catch (err) {
+            
+        }
     }
 
     logout = async (req: Request, res: Response) => {
+        try {
 
+        } catch (err) {
+            
+        }
     }
 
 }

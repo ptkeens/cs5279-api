@@ -1,4 +1,4 @@
-export class UserValidationError extends Error {
+export class AuthenticationError extends Error {
 
     constructor(message: string) {
         super(message);

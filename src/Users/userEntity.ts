@@ -1,6 +1,6 @@
 import { UserDto } from './userDto';
 import  bcrypt from 'bcrypt';
-import { UserValidationError } from './UserValidationError';
+import { ValidationError } from '../Validation/ValidationError';
 
 export class UserEntity implements UserDto {
 
@@ -72,10 +72,10 @@ export class UserEntity implements UserDto {
             if (id > 0) {
                 return num;
             } else {
-                throw new UserValidationError('ID must be a non-negative and non-zero integer');
+                throw new ValidationError('ID must be a non-negative and non-zero integer');
             }
         } else {
-            throw new UserValidationError(`Supplied ID of ${id} is not a valid ID`);
+            throw new ValidationError(`Supplied ID of ${id} is not a valid ID`);
         }
     }
 
@@ -86,11 +86,11 @@ export class UserEntity implements UserDto {
      */
     static validateFirstName = (firstName: string) : string => {
         if (firstName === '' || firstName == undefined || firstName == null) {
-            throw new UserValidationError('First name cannot be empty');
+            throw new ValidationError('First name cannot be empty');
         }
         
         if (firstName.length > UserEntity.MAX_FIRSTNAME_LENGTH) {
-            throw new UserValidationError('Supplied First name is too long');
+            throw new ValidationError('Supplied First name is too long');
         }
 
         return firstName;
@@ -103,11 +103,11 @@ export class UserEntity implements UserDto {
      */
     static validateLastName = (lastName: string) : string => {
         if (lastName === '' || lastName == undefined || lastName == null) {
-            throw new UserValidationError('Last name cannot be empty');
+            throw new ValidationError('Last name cannot be empty');
         }
         
         if (lastName.length > UserEntity.MAX_LASTNAME_LENGTH) {
-            throw new UserValidationError('Supplied Last name is too long');
+            throw new ValidationError('Supplied Last name is too long');
         }
 
         return lastName;
@@ -120,11 +120,11 @@ export class UserEntity implements UserDto {
      */
     static validateEmail = (email: string) : string => {
         if (email === '' || email == undefined || email == null) {
-            throw new UserValidationError('Email cannot be empty');
+            throw new ValidationError('Email cannot be empty');
         }
         
         if (email.length > UserEntity.MAX_EMAIL_LENGTH) {
-            throw new UserValidationError('Supplied Email is too long');
+            throw new ValidationError('Supplied Email is too long');
         }
 
         return email;
@@ -137,7 +137,7 @@ export class UserEntity implements UserDto {
      */
     static validatePassword = (password: string) : string => {
         if (password === '' || password == undefined || password == null) {
-            throw new UserValidationError('Password cannot be empty');
+            throw new ValidationError('Password cannot be empty');
         }
 
         return password;

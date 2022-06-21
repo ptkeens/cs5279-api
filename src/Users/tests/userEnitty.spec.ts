@@ -1,6 +1,5 @@
 import { UserDto } from "../userDto";
 import { UserEntity } from "../userEntity";
-import { UserValidationError } from "../UserValidationError";
 
 test('User entity can be populated from EntityDto', () => {
     const record = {

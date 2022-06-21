@@ -1,19 +1,19 @@
 import { UserDto, CreateUserDto, UpdateUserDto, UserSearchDto } from './userDto';
-import { baseUserRepository } from "./userRepository"
+import { BaseUserRepository } from "./userRepository"
 
 export class UserService {
 
-    repository: baseUserRepository;
+    repository: BaseUserRepository;
 
     constructor() {
-        this.repository = new baseUserRepository();
+        this.repository = new BaseUserRepository();
     }
 
     /**
      * Set the repository to use for this service
      * @param {baseUserRepository} rep 
      */
-    setRepository(rep: baseUserRepository) {
+    setRepository(rep: BaseUserRepository) {
         this.repository = rep;
     }
 
