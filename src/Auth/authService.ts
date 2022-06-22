@@ -1,6 +1,6 @@
 import { Request } from "express"
 import { UserDto, UserSearchDto } from "../Users/userDto";
-import { CreateUserTokenDto, UserTokenDto } from "../UserTokens/userTokenDto";
+import { CreateUserTokenDto, UpdateUserTokenDto, UserTokenDto, UserTokenSearchDto } from "../UserTokens/userTokenDto";
 import { BaseUserRepository } from "../Users/userRepository";
 import { BaseUserTokenRepository } from "../UserTokens/userTokenRepository";
 import { UserEntity } from "../Users/userEntity";
@@ -37,20 +37,47 @@ export class AuthService {
     processLogin = async (request: Request) => {
         const email = request.body?.email;
         const password = request.body?.password;
-        const ipAddress = request.ip;
+        const ipAddress = request.socket.remoteAddress?.split(':').pop();
 
         try {
             if (email && password) {
                 const user = await this.locateUserByEmailAndPassword(email, password);
                 const token = await this.generateAndStoreTokenForUser(user, ipAddress);
 
+                // strip password from response
+                delete user.password;
+
                 return {
-                    user,
-                    token
+                    userDetails: user,
+                    token: token.token,
+                    expires: token.expires
                 }
             } else {
-                throw new Error("Must supply both a username and password");
+                throw new Error('Must supply both a username and password');
             }
+        } catch (err) {
+            console.log(err);
+            if (err !instanceof DatabaseError) {
+                throw new AuthenticationError(err.message);
+            }
+
+            throw err;
+        }
+    }
+
+    checkLogin = async (request: Request) : Promise<UpdateUserTokenDto|undefined> => {
+        const userId = request.body.userId;
+        const token = request.body.token;
+
+        try {
+            if (userId && token) {
+                const tokenDto = await this.isValidToken(token, userId);
+                const updatedToken = await this.extendToken(tokenDto);
+                
+                return updatedToken;
+            }
+
+            throw new Error('Missing required parameters for checkLogin');
         } catch (err) {
             console.log(err);
             if (err !instanceof DatabaseError) {
@@ -89,7 +116,7 @@ export class AuthService {
         
     }
 
-    generateAndStoreTokenForUser = async (user: UserDto, ipAddress: string) : Promise<UserTokenDto> => {
+    generateAndStoreTokenForUser = async (user: UserDto, ipAddress: string|undefined) : Promise<UserTokenDto> => {
         try {
             const params = {
                 token: UserTokenEntity.generateRandomToken(),
@@ -105,6 +132,54 @@ export class AuthService {
 
             throw new Error('Error when generating token for user');
         } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    isValidToken = async (token: string, userId: number) : Promise<UserTokenDto> => {
+        try {
+            const result = await this.tokenRepository.search({
+                token,
+                userId,
+                expiresGt: Math.floor(Date.now() / 1000)
+            });
+
+            if (result) {
+                return result[0];
+            }
+
+            throw new Error('Token not found or has expired');
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    extendToken = async (token: UserTokenDto) => {
+        try {
+            const newExpires = Date.now() + UserTokenEntity.DEFAULT_TIMEOUT;
+
+            const updateTokenRequest: UpdateUserTokenDto = {
+                token: token.token,
+                userId: token.userId,
+                expires: newExpires,
+                remoteAddress: token.remoteAddress
+            };
+
+            try {
+                const result = await this.tokenRepository.update(updateTokenRequest);
+
+                if (result) {
+                    return updateTokenRequest;
+                }
+            } catch (err) {
+                console.log(err);
+                throw err;
+            }
+        
+        } catch (err) {
+            console.log(err);
             throw err;
         }
     }

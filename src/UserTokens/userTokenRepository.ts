@@ -13,7 +13,7 @@ export class BaseUserTokenRepository {
         });
     }
 
-    update = async (token: string, params: UpdateUserTokenDto) : Promise<number> => {
+    update = async (params: UpdateUserTokenDto) : Promise<number> => {
         return new Promise((resolve, reject) => {
             resolve(1);
         });
@@ -47,8 +47,8 @@ export class UserTokenRepository extends BaseUserTokenRepository {
         let query = `INSERT INTO ${this.table} SET
             token = ?,
             userId = ?,
-            remoteAddress = ?
-            expires = ?,
+            remoteAddress = ?,
+            expires = ?
         ON DUPLICATE KEY UPDATE
             expires = VALUES(expires),
             remoteAddress = VALUES(remoteAddress)
@@ -65,14 +65,14 @@ export class UserTokenRepository extends BaseUserTokenRepository {
             const conn = await DatabaseService.getConnection();
             const result = await conn.execute<ResultSetHeader>(query, params);
 
-            return result.length ? result[0].insertId : 0;
+            return result.length ? result[0].affectedRows : 0;
         } catch (err) {
             console.log(err);
             throw new DatabaseError('Error when creating user token!');
         }
     }
 
-    update = async (token: string, params: UpdateUserTokenDto) : Promise<number> => {
+    update = async (params: UpdateUserTokenDto) : Promise<number> => {
         let query = `UPDATE ${this.table} SET `;
         const groupedParams = [];
         const updateParams = [];
@@ -106,16 +106,16 @@ export class UserTokenRepository extends BaseUserTokenRepository {
         query += ` WHERE 
             token = ?
         ON DUPLICATE KEY UPDATE ` + updateParams.join(', ');
-        values.push(UserTokenEntity.validateToken(token));
+        values.push(UserTokenEntity.validateToken(params.token));
 
         try {
             const conn = await DatabaseService.getConnection();
-            const result = await conn.execute<ResultSetHeader>(query, params);
+            const result = await conn.execute<ResultSetHeader>(query, values);
 
             return result ? result[0].affectedRows : 0;
         } catch (err) {
             console.log(err);
-            throw new DatabaseError(`Error when updating token ${token}`);
+            throw new DatabaseError(`Error when updating token ${params.token}`);
         }
     }
 

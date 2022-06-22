@@ -79,7 +79,7 @@ export class UserTokenEntity {
             throw new ValidationError('IP address cannot be empty');
         }
         
-        if (ip.length != 15) {
+        if (!/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/.test(ip)) {
             throw new ValidationError('Supplied IP not a valid IPV4 IP');
         }
 
