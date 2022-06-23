@@ -182,7 +182,6 @@ export class AuthService {
             throw new Error('Token not found or has expired');
         } catch (err) {
             if (err instanceof Error && !(err instanceof DatabaseError)) {
-                console.log('error in authService.isvalidToken is NOT a database error');
                 throw new AuthenticationError(err.message);
             }
             throw err;
@@ -204,9 +203,6 @@ export class AuthService {
                 expires: newExpires,
                 remoteAddress: token.remoteAddress
             };
-
-            console.log('update token request');
-            console.log(updateTokenRequest);
 
             try {
                 const result = await this.tokenRepository.update(updateTokenRequest);
