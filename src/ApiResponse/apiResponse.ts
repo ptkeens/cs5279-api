@@ -10,7 +10,7 @@ export class ApiResponse {
     code: number;
     error: boolean;
     message: string;
-    data: object|Array<any>;
+    data: object|Array<any>|undefined;
 
     /**
      * Iniitalize our object
@@ -57,7 +57,7 @@ export class ApiResponse {
      * @param {object|Array<any>} data
      * @returns ApiResponse
      */
-    setData = (data: object|Array<any>) : ApiResponse => {
+    setData = (data: object|Array<any>|undefined) : ApiResponse => {
         this.data = data;
         return this;
     }

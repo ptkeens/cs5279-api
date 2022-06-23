@@ -1,7 +1,7 @@
-import { baseUserRepository  } from "./userRepository"
+import { BaseUserRepository  } from "./userRepository"
 import { CreateUserDto, UpdateUserDto, UserSearchDto, UserDto } from "./userDto"
 
-export class MockUserRepository extends baseUserRepository {
+export class MockUserRepository extends BaseUserRepository {
 
     create = async (userCreate: CreateUserDto) : Promise<number> => {
         

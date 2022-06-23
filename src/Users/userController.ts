@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { ApiResponse } from '../ApiResponse/apiResponse';
+import { ValidationError } from '../Validation/ValidationError';
 import { UserRepository } from './userRepository';
 import { UserService } from "./userService";
-import { UserValidationError } from './UserValidationError';
 
 export class UserController {
 
     userService: UserService;
 
+    /**
+     * Constructor
+     */
     constructor() {
         this.userService = new UserService();
         this.userService.setRepository(
@@ -16,7 +19,7 @@ export class UserController {
     }
 
     /**
-     * 
+     * getAll
      * @param {Request} req 
      * @param {Response} res 
      */
@@ -36,7 +39,7 @@ export class UserController {
 
 
     /**
-     * 
+     * getOne
      * @param {Request} req 
      * @param {Response} res 
      */
@@ -65,7 +68,7 @@ export class UserController {
     }
 
     /**
-     * 
+     * createUser
      * @param {Request} req 
      * @param {Response} res 
      */
@@ -74,11 +77,18 @@ export class UserController {
             const result = await this.userService.createUser(req.body);
             const response = new ApiResponse();
 
-            console.log(result);
+            if (result) {
+                response.setCode(ApiResponse.HTTP_OK);
+            } else {
+                response
+                    .setCode(ApiResponse.HTTP_ERROR)
+                    .setError(true)
+                    .setMessage('Resource could not be created');
+            }
         } catch (err) {
             const response = new ApiResponse();
             response.setError(true);
-            if (err instanceof UserValidationError) {
+            if (err instanceof ValidationError) {
                 response
                     .setCode(ApiResponse.HTTP_BAD_REQUEST)
                     .setMessage(err.message);
@@ -88,7 +98,7 @@ export class UserController {
     }
 
     /**
-     * 
+     * updateUser
      * @param {Request} req 
      * @param {Response} res 
      */    
@@ -103,16 +113,16 @@ export class UserController {
                 response.setCode(ApiResponse.HTTP_OK);
             } else {
                 response
-                    .setCode(ApiResponse.HTTP_NOT_FOUND)
+                    .setCode(ApiResponse.HTTP_ERROR)
                     .setError(true)
-                    .setMessage('Resource not found');
+                    .setMessage('Resource could not be updated');
             }
 
             res.status(response.code).send(response.getResponse());
         } catch (err) {
             const response = new ApiResponse();
             response.setError(true);
-            if (err instanceof UserValidationError) {
+            if (err instanceof ValidationError) {
                 response
                     .setCode(ApiResponse.HTTP_BAD_REQUEST)
                     .setMessage(err.message);
@@ -122,7 +132,7 @@ export class UserController {
     }
 
     /**
-     * 
+     * deleteUser
      * @param {Request} req 
      * @param {Response} res 
      */    
@@ -146,7 +156,7 @@ export class UserController {
         } catch (err) {
             const response = new ApiResponse();
             response.setError(true);
-            if (err instanceof UserValidationError) {
+            if (err instanceof ValidationError) {
                 response
                     .setCode(ApiResponse.HTTP_BAD_REQUEST)
                     .setMessage(err.message);
