@@ -3,6 +3,7 @@ import { UserRepository } from '../Users/userRepository';
 import { UserTokenRepository } from '../UserTokens/userTokenRepository';
 import { AuthService } from './authService';
 import { ApiResponse } from '../ApiResponse/apiResponse';
+import { AuthenticationError } from './AuthenticationError';
 
 export class AuthController {
 
@@ -28,7 +29,16 @@ export class AuthController {
 
             res.status(response.code).send(response.getResponse());
         } catch (err) {
-
+            const response = new ApiResponse();
+            response.setError(true);
+            if (err instanceof AuthenticationError) {
+                response
+                    .setCode(ApiResponse.HTTP_UNAUTHORIZED)
+                    .setMessage(err.message);
+                res.status(response.code).send(response.getResponse());
+            } else {
+                console.log('err is not an instance of auth error');
+            }
         }
     }
 

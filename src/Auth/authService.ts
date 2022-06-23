@@ -34,7 +34,12 @@ export class AuthService {
         this.tokenRepository = rep;
     }
 
-    processLogin = async (request: Request) => {
+    /**
+     * 
+     * @param {Request} request 
+     * @returns Promise<object>
+     */
+    processLogin = async (request: Request) : Promise<{}> => {
         const email = request.body?.email;
         const password = request.body?.password;
         const ipAddress = request.socket.remoteAddress?.split(':').pop();
@@ -57,7 +62,7 @@ export class AuthService {
             }
         } catch (err) {
             console.log(err);
-            if (err !instanceof DatabaseError) {
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
                 throw new AuthenticationError(err.message);
             }
 
@@ -65,7 +70,12 @@ export class AuthService {
         }
     }
 
-    checkLogin = async (request: Request) : Promise<UpdateUserTokenDto|undefined> => {
+    /**
+     * 
+     * @param {Request} request 
+     * @returns Promise<object>
+     */
+    checkLogin = async (request: Request) : Promise<{}> => {
         const userId = request.body.userId;
         const token = request.body.token;
 
@@ -74,13 +84,15 @@ export class AuthService {
                 const tokenDto = await this.isValidToken(token, userId);
                 const updatedToken = await this.extendToken(tokenDto);
                 
-                return updatedToken;
+                return {
+                    token: updatedToken
+                }
             }
 
             throw new Error('Missing required parameters for checkLogin');
         } catch (err) {
             console.log(err);
-            if (err !instanceof DatabaseError) {
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
                 throw new AuthenticationError(err.message);
             }
 
@@ -88,6 +100,12 @@ export class AuthService {
         }
     }
 
+    /**
+     * 
+     * @param {string} email 
+     * @param {string} password 
+     * @returns Promise<UserDto>
+     */
     locateUserByEmailAndPassword = async (email: string, password: string) : Promise<UserDto> => {
         try {
             const entity = new UserEntity();
@@ -116,6 +134,12 @@ export class AuthService {
         
     }
 
+    /**
+     * 
+     * @param {UserDto} user 
+     * @param {string|undefined} ipAddress 
+     * @returns Promise<UserTokenDto>
+     */
     generateAndStoreTokenForUser = async (user: UserDto, ipAddress: string|undefined) : Promise<UserTokenDto> => {
         try {
             const params = {
@@ -137,6 +161,12 @@ export class AuthService {
         }
     }
 
+    /**
+     * 
+     * @param {string} token 
+     * @param {number} userId 
+     * @returns Promise<UserTokenDto>
+     */
     isValidToken = async (token: string, userId: number) : Promise<UserTokenDto> => {
         try {
             const result = await this.tokenRepository.search({
@@ -145,27 +175,38 @@ export class AuthService {
                 expiresGt: Math.floor(Date.now() / 1000)
             });
 
-            if (result) {
+            if (result.length) {
                 return result[0];
             }
 
             throw new Error('Token not found or has expired');
         } catch (err) {
-            console.log(err);
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                console.log('error in authService.isvalidToken is NOT a database error');
+                throw new AuthenticationError(err.message);
+            }
             throw err;
         }
     }
 
-    extendToken = async (token: UserTokenDto) => {
+    /**
+     * 
+     * @param {UserTokenDto} token 
+     * @returns Promise<UpdateUserTokenDto>
+     */
+    extendToken = async (token: UserTokenDto) : Promise<UpdateUserTokenDto> => {
         try {
-            const newExpires = Date.now() + UserTokenEntity.DEFAULT_TIMEOUT;
+            const newExpires = Math.floor(Date.now() / 1000) + UserTokenEntity.DEFAULT_TIMEOUT;
 
-            const updateTokenRequest: UpdateUserTokenDto = {
+            const updateTokenRequest = {
                 token: token.token,
                 userId: token.userId,
                 expires: newExpires,
                 remoteAddress: token.remoteAddress
             };
+
+            console.log('update token request');
+            console.log(updateTokenRequest);
 
             try {
                 const result = await this.tokenRepository.update(updateTokenRequest);
@@ -173,6 +214,8 @@ export class AuthService {
                 if (result) {
                     return updateTokenRequest;
                 }
+
+                throw new Error('Unable to extend token');
             } catch (err) {
                 console.log(err);
                 throw err;

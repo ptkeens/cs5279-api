@@ -97,15 +97,14 @@ export class UserTokenRepository extends BaseUserTokenRepository {
                 case 'expires':
                     values.push(UserTokenEntity.validateExpires(value));
                     updateParams.push('expires = VALUES(expires)');
+                    break;
                 default:
                     values.push(value);
             }
         }
 
         query += groupedParams.join(', ');
-        query += ` WHERE 
-            token = ?
-        ON DUPLICATE KEY UPDATE ` + updateParams.join(', ');
+        query += ` WHERE token = ?`;
         values.push(UserTokenEntity.validateToken(params.token));
 
         try {

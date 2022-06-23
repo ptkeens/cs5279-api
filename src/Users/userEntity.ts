@@ -35,7 +35,10 @@ export class UserEntity implements UserDto {
         this.firstName = details.firstName;
         this.lastName = details.lastName;
         this.email = details.email;
-        this.password = details.password;
+
+        if (details.password) {
+            this.password = details.password;
+        }
 
         return this;
     }
