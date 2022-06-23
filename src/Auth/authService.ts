@@ -61,7 +61,6 @@ export class AuthService {
                 throw new Error('Must supply both a username and password');
             }
         } catch (err) {
-            console.log(err);
             if (err instanceof Error && !(err instanceof DatabaseError)) {
                 throw new AuthenticationError(err.message);
             }
@@ -91,7 +90,6 @@ export class AuthService {
 
             throw new Error('Missing required parameters for checkLogin');
         } catch (err) {
-            console.log(err);
             if (err instanceof Error && !(err instanceof DatabaseError)) {
                 throw new AuthenticationError(err.message);
             }
@@ -129,6 +127,9 @@ export class AuthService {
 
             throw new Error('Unable to find matching user');
         } catch (err) {
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                throw new AuthenticationError(err.message);
+            }
             throw err;
         }
         
@@ -156,7 +157,9 @@ export class AuthService {
 
             throw new Error('Error when generating token for user');
         } catch (err) {
-            console.log(err);
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                throw new AuthenticationError(err.message);
+            }
             throw err;
         }
     }
@@ -204,21 +207,20 @@ export class AuthService {
                 remoteAddress: token.remoteAddress
             };
 
-            try {
-                const result = await this.tokenRepository.update(updateTokenRequest);
+            const result = await this.tokenRepository.update(updateTokenRequest);
 
-                if (result) {
-                    return updateTokenRequest;
-                }
-
-                throw new Error('Unable to extend token');
-            } catch (err) {
-                console.log(err);
-                throw err;
+            if (result) {
+                return updateTokenRequest;
             }
+
+            throw new Error('Unable to extend token');
+
         
         } catch (err) {
-            console.log(err);
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                throw new AuthenticationError(err.message);
+            }
+        
             throw err;
         }
     }
