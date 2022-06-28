@@ -14,7 +14,7 @@ export class UserController {
     constructor() {
         this.userService = new UserService();
         this.userService.setRepository(
-            new UserRepository()
+            'user', new UserRepository()
         );
     }
 
@@ -33,7 +33,14 @@ export class UserController {
 
             res.status(response.code).send(response.getResponse());
         } catch (err) {
-            console.log(err);
+            const response = new ApiResponse();
+            response.setError(true);
+            if (err instanceof ValidationError) {
+                response
+                    .setCode(ApiResponse.HTTP_BAD_REQUEST)
+                    .setMessage(err.message);
+                res.status(response.code).send(response.getResponse());
+            }
         }
     }
 
@@ -63,7 +70,14 @@ export class UserController {
 
             res.status(response.code).send(response.getResponse());
         } catch (err) {
-            console.log(err);
+            const response = new ApiResponse();
+            response.setError(true);
+            if (err instanceof ValidationError) {
+                response
+                    .setCode(ApiResponse.HTTP_BAD_REQUEST)
+                    .setMessage(err.message);
+                res.status(response.code).send(response.getResponse());
+            }
         }    
     }
 
@@ -74,6 +88,7 @@ export class UserController {
      */
     createUser = async (req: Request, res: Response) => {
         try {
+            console.log('In create user from controller');
             const result = await this.userService.createUser(req.body);
             const response = new ApiResponse();
 
@@ -85,6 +100,8 @@ export class UserController {
                     .setError(true)
                     .setMessage('Resource could not be created');
             }
+
+            res.status(response.code).send(response.getResponse());
         } catch (err) {
             const response = new ApiResponse();
             response.setError(true);
