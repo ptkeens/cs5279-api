@@ -93,7 +93,7 @@ export class UserRepository extends SchemaRepository implements UserRepositoryIn
 
         try {
             const conn = await DatabaseService.getConnection();
-            const result = await conn.execute<ResultSetHeader>(query, params);
+            const result = await conn.execute<ResultSetHeader>(query, values);
 
             return result ? result[0].affectedRows : 0;
         } catch (err) {
