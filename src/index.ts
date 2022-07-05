@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import { authRouter } from './Auth/authRoutes';
 import { ApiResponse } from './ApiResponse/apiResponse';
 import { userRouter } from './Users/userRoutes';

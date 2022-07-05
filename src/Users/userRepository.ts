@@ -4,40 +4,17 @@ import { UserDto, CreateUserDto, UpdateUserDto, UserSearchDto } from './userDto'
 import { DatabaseError } from '../Database/databaseError';
 import { QueryBuilder } from '../Database/queryBuilder';
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
+import { SchemaRepository } from '../Framework/schemaRepository';
 
-export class BaseUserRepository {
-
-    create = async (userCreate: CreateUserDto) : Promise<number> => {
-        return new Promise((resolve, reject) => {
-            resolve(1);
-        });
-    }
-
-    update = async (id: number, params: UpdateUserDto) : Promise<number> => {
-        return new Promise((resolve, reject) => {
-            resolve(1);
-        });
-    }
-
-    delete = async (id: number) : Promise<number> => {
-        return new Promise((resolve, reject) => {
-            resolve(1);
-        });
-    }
-
-
-    search = async (userSearch: UserSearchDto) : Promise<Array<UserDto>> => {
-        return new Promise((resolve, reject) => {
-            resolve([]);
-        });
-    }
-
+export interface UserRepositoryInterface {
+    create (userCreate: CreateUserDto) : Promise<number>;
+    update (id: number, params: UpdateUserDto) : Promise<number>;
+    delete (id: number) : Promise<number>;
+    search (userSearch: UserSearchDto) : Promise<Array<UserDto>>;
 }
 
-export class UserRepository extends BaseUserRepository {
+export class UserRepository extends SchemaRepository implements UserRepositoryInterface {
     
-    table: string;
-
     constructor() {
         super();
         this.table = 'users';
@@ -116,7 +93,7 @@ export class UserRepository extends BaseUserRepository {
 
         try {
             const conn = await DatabaseService.getConnection();
-            const result = await conn.execute<ResultSetHeader>(query, params);
+            const result = await conn.execute<ResultSetHeader>(query, values);
 
             return result ? result[0].affectedRows : 0;
         } catch (err) {

@@ -1,38 +1,15 @@
 import { Request } from "express"
 import { UserDto, UserSearchDto } from "../Users/userDto";
-import { CreateUserTokenDto, UpdateUserTokenDto, UserTokenDto, UserTokenSearchDto } from "../UserTokens/userTokenDto";
-import { BaseUserRepository } from "../Users/userRepository";
-import { BaseUserTokenRepository } from "../UserTokens/userTokenRepository";
+import { UpdateUserTokenDto, UserTokenDto } from "../UserTokens/userTokenDto";
+import { UserRepository } from "../Users/userRepository";
+import { UserTokenRepository } from "../UserTokens/userTokenRepository";
 import { UserEntity } from "../Users/userEntity";
 import { DatabaseError } from "../Database/databaseError";
 import { AuthenticationError } from "./AuthenticationError";
 import { UserTokenEntity } from "../UserTokens/userTokenEntity";
+import { BaseService } from "../Framework/baseService";
 
-export class AuthService {
-    
-    userRepository: BaseUserRepository;
-    tokenRepository: BaseUserTokenRepository;
-
-    constructor() {
-        this.userRepository = new BaseUserRepository();
-        this.tokenRepository = new BaseUserTokenRepository();
-    }
-
-    /**
-     * Set the User repository to use for this service
-     * @param {baseUserRepository} rep 
-     */
-    setUserRepository(rep: BaseUserRepository) {
-        this.userRepository = rep;
-    }
-
-    /**
-     * Set the Token repository to use for this service
-     * @param {baseUserTokenRepository} rep 
-     */
-    setUserTokenRepository(rep: BaseUserTokenRepository) {
-        this.tokenRepository = rep;
-    }
+export class AuthService extends BaseService {
 
     /**
      * 
@@ -61,7 +38,6 @@ export class AuthService {
                 throw new Error('Must supply both a username and password');
             }
         } catch (err) {
-            console.log(err);
             if (err instanceof Error && !(err instanceof DatabaseError)) {
                 throw new AuthenticationError(err.message);
             }
@@ -76,12 +52,11 @@ export class AuthService {
      * @returns Promise<object>
      */
     checkLogin = async (request: Request) : Promise<{}> => {
-        const userId = request.body.userId;
         const token = request.body.token;
 
         try {
-            if (userId && token) {
-                const tokenDto = await this.isValidToken(token, userId);
+            if (token) {
+                const tokenDto = await this.isValidToken(token);
                 const updatedToken = await this.extendToken(tokenDto);
                 
                 return {
@@ -91,7 +66,6 @@ export class AuthService {
 
             throw new Error('Missing required parameters for checkLogin');
         } catch (err) {
-            console.log(err);
             if (err instanceof Error && !(err instanceof DatabaseError)) {
                 throw new AuthenticationError(err.message);
             }
@@ -109,7 +83,7 @@ export class AuthService {
     locateUserByEmailAndPassword = async (email: string, password: string) : Promise<UserDto> => {
         try {
             const entity = new UserEntity();
-            const results = await this.userRepository.search({
+            const results = await this.getRepository<UserRepository>('user').search({
                 email
             } as UserSearchDto);
     
@@ -129,6 +103,9 @@ export class AuthService {
 
             throw new Error('Unable to find matching user');
         } catch (err) {
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                throw new AuthenticationError(err.message);
+            }
             throw err;
         }
         
@@ -149,29 +126,33 @@ export class AuthService {
                 expires: Math.floor(Date.now() / 1000) + UserTokenEntity.DEFAULT_TIMEOUT
             } as UserTokenDto;
 
-            const result = await this.tokenRepository.create(params);
+            const result = await this.getRepository<UserTokenRepository>('token').create(params);
             if (result) {
                 return params;
             }
 
             throw new Error('Error when generating token for user');
         } catch (err) {
-            console.log(err);
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                throw new AuthenticationError(err.message);
+            }
             throw err;
         }
     }
 
     /**
      * 
-     * @param {string} token 
-     * @param {number} userId 
+     * @param {string|null} token 
      * @returns Promise<UserTokenDto>
      */
-    isValidToken = async (token: string, userId: number) : Promise<UserTokenDto> => {
+    isValidToken = async (token: string|null) : Promise<UserTokenDto> => {
         try {
-            const result = await this.tokenRepository.search({
+            if (token === null) {
+                throw new Error('Invalid token');
+            }
+
+            const result = await this.getRepository<UserTokenRepository>('token').search({
                 token,
-                userId,
                 expiresGt: Math.floor(Date.now() / 1000)
             });
 
@@ -204,23 +185,60 @@ export class AuthService {
                 remoteAddress: token.remoteAddress
             };
 
-            try {
-                const result = await this.tokenRepository.update(updateTokenRequest);
+            const result = await this.getRepository<UserTokenRepository>('token').update(updateTokenRequest);
 
-                if (result) {
-                    return updateTokenRequest;
-                }
+            if (result) {
+                return updateTokenRequest;
+            }
 
-                throw new Error('Unable to extend token');
-            } catch (err) {
-                console.log(err);
-                throw err;
+            throw new Error('Unable to extend token');
+
+
+        } catch (err) {
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                throw new AuthenticationError(err.message);
             }
         
-        } catch (err) {
-            console.log(err);
             throw err;
         }
+    }
+
+    getUserFromToken = async (token: string|null) : Promise<UserDto> => {
+        try {
+            const tokenResult = await this.isValidToken(token);
+            const userResult = await this.getRepository<UserRepository>('user')
+                .search({
+                    id: tokenResult.userId
+            });
+
+            const user = userResult[0];
+            user.token = tokenResult;
+            return user;
+        } catch (err) {
+            if (err instanceof Error && !(err instanceof DatabaseError)) {
+                throw new AuthenticationError(err.message);
+            }
+            throw err;            
+        }
+    }
+
+    /**
+     * 
+     * @param {Request} req 
+     * @returns string|null
+     */
+    static extractTokenFromRequest = (req: Request) :string|null => {
+        const authString = req.headers?.authorization;
+        let token = null;
+     
+        if (authString) {
+            let parts = authString.split(' ');
+            if (parts[0].toLowerCase().includes('bearer')) {
+                token = parts[1].trim();
+            }
+        }
+
+        return token;
     }
 
 }

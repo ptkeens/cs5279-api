@@ -4,39 +4,17 @@ import { QueryBuilder } from '../Database/queryBuilder';
 import { DatabaseError } from '../Database/databaseError';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { UserTokenEntity } from './userTokenEntity';
+import { SchemaRepository } from '../Framework/schemaRepository';
 
-export class BaseUserTokenRepository {
-
-    create = async (userCreate: CreateUserTokenDto) : Promise<number> => {
-        return new Promise((resolve, reject) => {
-            resolve(1);
-        });
-    }
-
-    update = async (params: UpdateUserTokenDto) : Promise<number> => {
-        return new Promise((resolve, reject) => {
-            resolve(1);
-        });
-    }
-
-    delete = async (token: string) : Promise<number> => {
-        return new Promise((resolve, reject) => {
-            resolve(1);
-        });
-    }
-
-
-    search = async (tokenSearch: UserTokenSearchDto) : Promise<Array<UserTokenDto>> => {
-        return new Promise((resolve, reject) => {
-            resolve([]);
-        });
-    }
+export interface UserTokenRepositoryInterface {
+    create (userCreate: CreateUserTokenDto) : Promise<number>;
+    update (params: UpdateUserTokenDto) : Promise<number>;
+    delete (token: string) : Promise<number>;
+    search (tokenSearch: UserTokenSearchDto) : Promise<Array<UserTokenDto>>;
 }
 
 
-export class UserTokenRepository extends BaseUserTokenRepository {
-
-    table: string;
+export class UserTokenRepository extends SchemaRepository implements UserTokenRepositoryInterface {
 
     constructor() {
         super();

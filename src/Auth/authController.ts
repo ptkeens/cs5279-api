@@ -11,12 +11,8 @@ export class AuthController {
 
     constructor() {
         this.authService = new AuthService();
-        this.authService.setUserRepository(
-            new UserRepository()
-        );
-        this.authService.setUserTokenRepository(
-            new UserTokenRepository()
-        );
+        this.authService.setRepository('user', new UserRepository());
+        this.authService.setRepository('token', new UserTokenRepository());
     }
 
     checkLogin = async (req: Request, res: Response) => {
@@ -35,10 +31,12 @@ export class AuthController {
                 response
                     .setCode(ApiResponse.HTTP_UNAUTHORIZED)
                     .setMessage(err.message);
-                res.status(response.code).send(response.getResponse());
             } else {
-                console.log('err is not an instance of auth error');
+                response
+                    .setCode(ApiResponse.HTTP_ERROR)
+                    .setMessage('Something went wrong');
             }
+            res.status(response.code).send(response.getResponse());
         }
     }
 
@@ -52,7 +50,18 @@ export class AuthController {
 
             res.status(response.code).send(response.getResponse());
         } catch (err) {
-            
+            const response = new ApiResponse();
+            response.setError(true);
+            if (err instanceof AuthenticationError) {
+                response
+                    .setCode(ApiResponse.HTTP_UNAUTHORIZED)
+                    .setMessage(err.message);
+            } else {
+                response
+                    .setCode(ApiResponse.HTTP_ERROR)
+                    .setMessage('Something went wrong');
+            }
+            res.status(response.code).send(response.getResponse());
         }
     }
 
@@ -60,7 +69,18 @@ export class AuthController {
         try {
 
         } catch (err) {
-            
+            const response = new ApiResponse();
+            response.setError(true);
+            if (err instanceof AuthenticationError) {
+                response
+                    .setCode(ApiResponse.HTTP_UNAUTHORIZED)
+                    .setMessage(err.message);
+            } else {
+                response
+                    .setCode(ApiResponse.HTTP_ERROR)
+                    .setMessage('Something went wrong');
+            }
+            res.status(response.code).send(response.getResponse());            
         }
     }
 

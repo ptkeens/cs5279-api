@@ -1,7 +1,8 @@
-import { BaseUserRepository  } from "./userRepository"
+import { UserRepositoryInterface  } from "./userRepository"
 import { CreateUserDto, UpdateUserDto, UserSearchDto, UserDto } from "./userDto"
+import { MockRepository } from "../Framework/mockRepository";
 
-export class MockUserRepository extends BaseUserRepository {
+export class MockUserRepository extends MockRepository implements UserRepositoryInterface {
 
     create = async (userCreate: CreateUserDto) : Promise<number> => {
         

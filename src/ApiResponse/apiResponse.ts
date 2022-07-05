@@ -71,12 +71,10 @@ export class ApiResponse {
 
         if (this.error) {
             response = {
-                code: this.code,
                 error: this.message
             }
         } else {
             response = {
-                code: this.code,
                 data: this.data
             }
         }

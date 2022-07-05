@@ -1,21 +1,8 @@
+import { BaseService } from '../Framework/baseService';
 import { UserDto, CreateUserDto, UpdateUserDto, UserSearchDto } from './userDto';
-import { BaseUserRepository } from "./userRepository"
+import { UserRepository } from "./userRepository"
 
-export class UserService {
-
-    repository: BaseUserRepository;
-
-    constructor() {
-        this.repository = new BaseUserRepository();
-    }
-
-    /**
-     * Set the repository to use for this service
-     * @param {baseUserRepository} rep 
-     */
-    setRepository(rep: BaseUserRepository) {
-        this.repository = rep;
-    }
+export class UserService extends BaseService {
 
     /**
      * Perform a "search" to list users
@@ -24,7 +11,7 @@ export class UserService {
      */
     listUsers = async (params: UserSearchDto) : Promise<Array<UserDto>> => {
         try {       
-            const result = await this.repository.search(params);
+            const result = await this.getRepository<UserRepository>('user').search(params);
             return result;
         } catch (err) {
             throw err;
@@ -42,7 +29,7 @@ export class UserService {
                 id
             } as UserSearchDto;
         
-            const result = await this.repository.search(params);
+            const result = await this.getRepository<UserRepository>('user').search(params);
             return result;
         } catch (err) {
             throw err;
@@ -56,7 +43,7 @@ export class UserService {
      */
     createUser = async (params: CreateUserDto) => {
         try {
-            const result = await this.repository.create(params);
+            const result = await this.getRepository<UserRepository>('user').create(params);
             return result;
         } catch (err) {
             throw err;
@@ -71,7 +58,7 @@ export class UserService {
      */
     updateUser = async (id: number, params: UpdateUserDto) : Promise<number> => {
         try {
-            const result = await this.repository.update(id, params);
+            const result = await this.getRepository<UserRepository>('user').update(id, params);
             return result;
         } catch (err) {
             throw err;
@@ -85,7 +72,7 @@ export class UserService {
      */
     deleteUser = async (id: number) : Promise<number> => {
         try {
-            const result = await this.repository.delete(id);
+            const result = await this.getRepository<UserRepository>('user').delete(id);
             return result;
         } catch (err) {
             throw err;

@@ -1,9 +1,12 @@
+import { UserTokenDto } from "../UserTokens/userTokenDto";
+
 export interface UserDto {
     id: number;
     firstName: string;
     lastName: string;
     email: string;
     password?: string;
+    token?: UserTokenDto
 }
 
 export interface CreateUserDto {
