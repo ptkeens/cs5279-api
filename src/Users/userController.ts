@@ -88,7 +88,6 @@ export class UserController {
      */
     createUser = async (req: Request, res: Response) => {
         try {
-            console.log('In create user from controller');
             const result = await this.userService.createUser(req.body);
             const response = new ApiResponse();
 

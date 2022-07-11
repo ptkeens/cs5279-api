@@ -1,29 +1,81 @@
 import { BaseService } from '../Framework/baseService';
-import { CreateStudiesDto, StudiesSearchDto, UpdateStudiesDto } from './StudiesDto';
+import { StudiesDto, CreateStudiesDto, StudiesSearchDto, UpdateStudiesDto } from './studiesDto';
+import { StudiesRepository } from './studiesRepository';
 
 export class StudiesService extends BaseService {
 
-    listStudies = async (params: StudiesSearchDto) => {
-
+    /**
+     * Perform a "search" to list studies
+     * @param {StudiesSearchDto} params 
+     * @returns Promise<Array<StudiesDto>>
+     */
+     listStudies = async (params: StudiesSearchDto) : Promise<Array<StudiesDto>> => {
+        try {       
+            const result = await this.getRepository<StudiesRepository>('studies').search(params);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
 
-    getStudy = async (id: number) => {
-
+    /**
+     * Get a single study record
+     * @param {number} id 
+     * @returns Promise<Array<UserDto>>
+     */
+    getStudy = async (id: number) : Promise<Array<StudiesDto>> => {
+        try {
+            const params = {
+                id
+            } as StudiesSearchDto;
+        
+            const result = await this.getRepository<StudiesRepository>('studies').search(params);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
 
-    addStudy = async (params: CreateStudiesDto) => {
-
+    /**
+     * Create a study
+     * @param {CreateUserDto} params 
+     * @returns 
+     */
+    createStudy = async (params: CreateStudiesDto) => {
+        try {
+            const result = await this.getRepository<StudiesRepository>('studies').create(params);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
 
-    updateStudy = async (id: number, params: UpdateStudiesDto) => {
-
+    /**
+     * Update a study record
+     * @param {number} id 
+     * @param {UpdateUserDto} params 
+     * @returns Promise<number>
+     */
+    updateStudy = async (id: number, params: UpdateStudiesDto) : Promise<number> => {
+        try {
+            const result = await this.getRepository<StudiesRepository>('studies').update(id, params);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
 
-    deleteStudy = async (id: number) => {
-
-    }
-
-    search = async (params: StudiesSearchDto) => {
-
+    /**
+     * Delete a study record
+     * @param {number} id 
+     * @returns Promise<number>
+     */
+    deleteStudy = async (id: number) : Promise<number> => {
+        try {
+            const result = await this.getRepository<StudiesRepository>('studies').delete(id);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
 }
