@@ -14,7 +14,7 @@ export class StudiesController {
     constructor() {
         this.studiesService = new StudiesService();
         this.studiesService.setRepository(
-            'user', new StudiesRepository()
+            'studies', new StudiesRepository()
         );
     }
 
@@ -36,6 +36,7 @@ export class StudiesController {
                     .setMessage(err.message);
                 res.status(response.code).send(response.getResponse());
             }
+            console.log(err);
         }
     }
 

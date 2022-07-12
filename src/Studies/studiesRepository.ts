@@ -32,7 +32,7 @@ export class StudiesRepository extends SchemaRepository implements StudiesReposi
 
         try {
             const conn = await DatabaseService.getConnection();
-            const result = await conn.execute<ResultSetHeader>(query, params);
+            const result = await conn.execute<ResultSetHeader>(query, values);
 
             return result.length ? result[0].insertId : 0;
         } catch (err) {
