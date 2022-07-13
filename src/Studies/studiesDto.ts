@@ -1,16 +1,16 @@
 export interface StudiesDto {
     id: number,
-    studyTitle: string;
+    title: string;
     studyParameters?: any;
 }
 
 export interface CreateStudiesDto {
     id: number,
-    studyTitle: string;
+    title: string;
 }
 
 export interface UpdateStudiesDto {
-    studyTitle?: string;
+    title?: string;
 }
 
 export interface StudiesSearchDto {

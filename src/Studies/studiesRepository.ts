@@ -27,7 +27,7 @@ export class StudiesRepository extends SchemaRepository implements StudiesReposi
         `;
 
         const values = [
-            StudiesEntity.validateTitle(params.studyTitle)
+            StudiesEntity.validateTitle(params.title)
         ];
 
         try {
