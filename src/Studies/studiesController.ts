@@ -1,31 +1,26 @@
-import { Request, Response } from 'express';
-import { ApiResponse } from '../ApiResponse/apiResponse';
-import { ValidationError } from '../Validation/ValidationError';
-import { UserRepository } from './userRepository';
-import { UserService } from "./userService";
+import { StudiesService } from "./studiesService";
+import { StudiesRepository } from "./studiesRepository";
+import { Request, Response } from "express";
+import { ApiResponse } from "../ApiResponse/apiResponse";
+import { ValidationError } from "../Validation/ValidationError";
 
-export class UserController {
+export class StudiesController {
 
-    userService: UserService;
+    studiesService: StudiesService;
 
     /**
      * Constructor
      */
     constructor() {
-        this.userService = new UserService();
-        this.userService.setRepository(
-            'user', new UserRepository()
+        this.studiesService = new StudiesService();
+        this.studiesService.setRepository(
+            'studies', new StudiesRepository()
         );
     }
 
-    /**
-     * getAll
-     * @param {Request} req 
-     * @param {Response} res 
-     */
     getAll = async (req: Request, res: Response) => {
         try {
-            const result = await this.userService.listUsers(req.query);
+            const result = await this.studiesService.listStudies(req.query);
             const response = new ApiResponse();
             response
                 .setCode(ApiResponse.HTTP_OK)
@@ -41,18 +36,13 @@ export class UserController {
                     .setMessage(err.message);
                 res.status(response.code).send(response.getResponse());
             }
+            console.log(err);
         }
     }
 
-
-    /**
-     * getOne
-     * @param {Request} req 
-     * @param {Response} res 
-     */
     getOne = async (req: Request, res: Response) => {
         try {
-            const result = await this.userService.getUser(
+            const result = await this.studiesService.getStudy(
                 parseInt(req.params.id)
             );
             const response = new ApiResponse();
@@ -81,14 +71,9 @@ export class UserController {
         }    
     }
 
-    /**
-     * createUser
-     * @param {Request} req 
-     * @param {Response} res 
-     */
-    createUser = async (req: Request, res: Response) => {
+    createStudy = async (req: Request, res: Response) => {
         try {
-            const result = await this.userService.createUser(req.body);
+            const result = await this.studiesService.createStudy(req.body);
             const response = new ApiResponse();
 
             if (result) {
@@ -113,16 +98,11 @@ export class UserController {
         }
     }
 
-    /**
-     * updateUser
-     * @param {Request} req 
-     * @param {Response} res 
-     */    
-    updateUser = async (req: Request, res: Response) => {
+    updateStudy = async (req: Request, res: Response) => {
         try {
             const id = parseInt(req.params?.id);
 
-            const result = await this.userService.updateUser(id, req.body);
+            const result = await this.studiesService.updateStudy(id, req.body);
             const response = new ApiResponse();
 
             if (result) {
@@ -147,16 +127,11 @@ export class UserController {
         }
     }
 
-    /**
-     * deleteUser
-     * @param {Request} req 
-     * @param {Response} res 
-     */    
-    deleteUser = async (req: Request, res: Response) => {
+    deleteStudy = async (req: Request, res: Response) => {
         try {
             const id = parseInt(req.params?.id);
 
-            const result = await this.userService.deleteUser(id);
+            const result = await this.studiesService.deleteStudy(id);
             const response = new ApiResponse();
 
             if (result) {
@@ -180,6 +155,4 @@ export class UserController {
             }
         }
     }
-
-    
 }
