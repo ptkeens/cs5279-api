@@ -1,0 +1,35 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "master", "staging", "development" ]
+  pull_request:
+    branches: [ "master", "staging", "development" ]
+
+jobs:
+  backend_ci:
+    name: Node JS CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Run npm ci
+        working-directory: ./
+        run: npm ci
+      
+      - name: Run npm run build --if-present
+        working-directory: ./
+        run: npm run build --if-present
+      
+      - name: Run npm test
+        working-directory: ./
+        run: npm test
