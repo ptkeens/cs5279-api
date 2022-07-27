@@ -8,7 +8,7 @@ export interface PatientDto {
     ageOfDiagnosis: number;
     cardiacArrhythmias: string;
     cardiacPacemaker: string;
-    HirschprungDisease: string;
+    hirschprungDisease: string;
 }
 
 export interface CreatePatientDto {
@@ -20,7 +20,7 @@ export interface CreatePatientDto {
     ageOfDiagnosis: number;
     cardiacArrhythmias: string;
     cardiacPacemaker: string;
-    HirschprungDisease: string;
+    hirschprungDisease: string;
 }
 
 export interface UpdatePatientDto {
@@ -32,7 +32,7 @@ export interface UpdatePatientDto {
     ageOfDiagnosis?: number;
     cardiacArrhythmias?: string;
     cardiacPacemaker?: string;
-    HirschprungDisease?: string;
+    hirschprungDisease?: string;
 }
 
 export interface PatientSearchDto {
@@ -45,7 +45,7 @@ export interface PatientSearchDto {
     ageOfDiagnosis?: number;
     cardiacArrhythmias?: string;
     cardiacPacemaker?: string;
-    HirschprungDisease?: string;
+    hirschprungDisease?: string;
     sort?: string;
     limit?: number;
     offset?: number;

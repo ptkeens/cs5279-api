@@ -4,6 +4,7 @@ import { authRouter } from './Auth/authRoutes';
 import { ApiResponse } from './ApiResponse/apiResponse';
 import { userRouter } from './Users/userRoutes';
 import { studiesRouter } from './Studies/studiesRouter';
+import { patientRouter } from './Patients/patientRoutes';
 
 const app: Express = express();
 const port = process.env.PORT || 80;
@@ -18,7 +19,7 @@ app.use('/auth', authRouter);
 app.use('/users', userRouter);
 
 // Patient routes
-// app.use('/patients', patientsRouter);
+app.use('/patients', patientRouter);
 
 // Study routes
 app.use('/studies', studiesRouter);
